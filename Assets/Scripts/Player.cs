@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb2D;
     private float horizontalInput = 0;
     private bool wasJumpButtonPressed = false;
+    private bool canDash = true;
 
     private void Awake()
     {
@@ -31,6 +32,21 @@ public class Player : MonoBehaviour
         GetInput();
         HandleHorizontalMovement();
         HandleJump();
+
+        switch (season)
+        {
+            case Season.Spring:
+                Spring_Ability();
+                break;
+            case Season.Summer:
+                Summer_Ability();
+                break;
+            case Season.Winter:
+                Winter_Ability();
+                break;
+            default:
+                break;
+        }
     }
 
     private void HandleHorizontalMovement()
@@ -46,6 +62,22 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void Spring_Ability()
+    {
+
+    }
+    private void Summer_Ability()
+    {
+        if(canDash && GameInput.Instance.WasButtonPressedThisFrame(GameInput.GameButton.Powerup))
+        {
+
+        }
+    }
+    private void Winter_Ability()
+    {
+
+    }
+
     private void GetInput()
     {
         if (GameInput.Instance.IsButtonPressed(GameInput.GameButton.Right)) horizontalInput = 1f;
@@ -53,10 +85,5 @@ public class Player : MonoBehaviour
         else horizontalInput = 0f;
 
         wasJumpButtonPressed = GameInput.Instance.WasButtonPressedThisFrame(GameInput.GameButton.Jump);
-    }
-
-    private void Spring_Ability()
-    {
-
     }
 }
