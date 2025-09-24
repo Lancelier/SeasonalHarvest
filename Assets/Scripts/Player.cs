@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private Season season;
+
     [SerializeField] private float moveSpeed;
     [SerializeField] private float horizontalMoveSpeedLerpFactor;
-    [SerializeField] private float maxJumpVelocity;
+    [SerializeField] private float jumpForce;
+    [SerializeField] private float dashForce;
+    [SerializeField] private int maxDashes;
 
-    [SerializeField] private Season season;
 
     public enum Season
     {
@@ -20,11 +24,17 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb2D;
     private float horizontalInput = 0;
     private bool wasJumpButtonPressed = false;
-    private bool canDash = true;
+    private int dashesLeft = 0;
+    private bool canJump = false;
 
     private void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
+    }
+
+    private void Start()
+    {
+        dashesLeft = maxDashes;
     }
 
     private void Update()
@@ -36,6 +46,7 @@ public class Player : MonoBehaviour
         switch (season)
         {
             case Season.Spring:
+                
                 Spring_Ability();
                 break;
             case Season.Summer:
@@ -51,14 +62,16 @@ public class Player : MonoBehaviour
 
     private void HandleHorizontalMovement()
     {
-        rb2D.velocity = Vector2.Lerp(rb2D.velocity, new Vector2 (horizontalInput * moveSpeed, rb2D.velocity.y), Time.deltaTime * horizontalMoveSpeedLerpFactor);
+        if(horizontalInput != 0f) transform.localScale = new Vector3(horizontalInput, transform.localScale.y, transform.localScale.z);
+
+        rb2D.velocity = Vector2.Lerp(rb2D.velocity, new Vector2(horizontalInput * moveSpeed, rb2D.velocity.y), Time.deltaTime * horizontalMoveSpeedLerpFactor);
     }
 
     private void HandleJump()
     {
-        if (wasJumpButtonPressed)
+        if (canJump && wasJumpButtonPressed)
         {
-            rb2D.velocity = new Vector2(rb2D.velocity.x, maxJumpVelocity);
+            rb2D.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
         }
     }
 
@@ -68,14 +81,40 @@ public class Player : MonoBehaviour
     }
     private void Summer_Ability()
     {
-        if(canDash && GameInput.Instance.WasButtonPressedThisFrame(GameInput.GameButton.Powerup))
+        if(dashesLeft > 0 && GameInput.Instance.WasButtonPressedThisFrame(GameInput.GameButton.Powerup))
         {
-
+            Dash();
         }
     }
     private void Winter_Ability()
     {
 
+    }
+
+    private void Dash()
+    {
+        if(dashesLeft > 0)
+        {
+            rb2D.AddForce(new Vector2(dashForce * transform.localScale.x, 0), ForceMode2D.Impulse);
+            dashesLeft--;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.transform.position.y < transform.position.y) 
+        {
+            canJump = true;
+            dashesLeft = maxDashes; 
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.transform.position.y < transform.position.y)
+        {
+            canJump = false;
+        }
     }
 
     private void GetInput()

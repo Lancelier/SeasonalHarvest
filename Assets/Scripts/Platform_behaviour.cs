@@ -16,6 +16,7 @@ public class Platform_behaviour : MonoBehaviour
     }
 
     [SerializeField] private Season season;
+    [SerializeField] private float springPlatformJumpForce;
     [SerializeField] private float winterPlatformDelayToBreak;
     [SerializeField] private float winterPlatformRespawnDelay;
 
@@ -89,7 +90,7 @@ public class Platform_behaviour : MonoBehaviour
         if (season == Season.Spring)
         {
             collision.gameObject.TryGetComponent(out Rigidbody2D rb);
-            rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(0, springPlatformJumpForce), ForceMode2D.Impulse);
         }
 
         if (season == Season.Summer)
