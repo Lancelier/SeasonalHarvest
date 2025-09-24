@@ -172,7 +172,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 2.3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -199,6 +199,7 @@ MonoBehaviour:
   moveSpeed: 10
   horizontalMoveSpeedLerpFactor: 10
   maxJumpVelocity: 10
+  season: 0
 --- !u!61 &383662309
 BoxCollider2D:
   m_ObjectHideFlags: 0

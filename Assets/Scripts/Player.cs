@@ -8,6 +8,15 @@ public class Player : MonoBehaviour
     [SerializeField] private float horizontalMoveSpeedLerpFactor;
     [SerializeField] private float maxJumpVelocity;
 
+    [SerializeField] private Season season;
+
+    public enum Season
+    {
+        Spring,
+        Summer,
+        Winter
+    }
+
     private Rigidbody2D rb2D;
     private float horizontalInput = 0;
     private bool wasJumpButtonPressed = false;
@@ -44,5 +53,10 @@ public class Player : MonoBehaviour
         else horizontalInput = 0f;
 
         wasJumpButtonPressed = GameInput.Instance.WasButtonPressedThisFrame(GameInput.GameButton.Jump);
+    }
+
+    private void Spring_Ability()
+    {
+
     }
 }
