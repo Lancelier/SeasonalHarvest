@@ -12,8 +12,10 @@ public class Player : MonoBehaviour
     [SerializeField] private float maxFallSpeed;
     [SerializeField] private float springGlideMaxFallSpeed;
     [SerializeField] private float jumpForce;
-    [SerializeField] private float dashForce;
-    [SerializeField] private int maxDashes;
+    [SerializeField] private float horizontalDashForce;
+    [SerializeField] private float verticalDashForce;
+    [SerializeField] private int maxHorizontalDashes;
+    [SerializeField] private int maxVerticalDashes;
 
 
     public enum Season
@@ -25,8 +27,10 @@ public class Player : MonoBehaviour
 
     private Rigidbody2D rb2D;
     private float horizontalInput = 0;
+    private float verticalInput = 0;
     private bool wasJumpButtonPressed = false;
-    private int dashesLeft = 0;
+    private int horizontalDashesLeft = 0;
+    private int verticalDashesLeft = 0;
     private bool canJump = false;
     private float fallSpeed;
     private bool isGliding = false;
@@ -38,7 +42,8 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        dashesLeft = maxDashes;
+        horizontalDashesLeft = maxHorizontalDashes;
+        verticalDashesLeft = maxVerticalDashes;
         fallSpeed = maxFallSpeed;
     }
 
@@ -54,16 +59,17 @@ public class Player : MonoBehaviour
                 Spring_Ability();
                 break;
             case Season.Summer:
+                isGliding = false;
                 Summer_Ability();
                 break;
             case Season.Winter:
+                isGliding = false;
                 Winter_Ability();
                 break;
             default:
+                isGliding = false;
                 break;
         }
-
-        Debug.Log(rb2D.velocity.y);
     }
 
     private void HandleHorizontalMovement()
@@ -99,22 +105,33 @@ public class Player : MonoBehaviour
     }
     private void Summer_Ability()
     {
-        if(dashesLeft > 0 && GameInput.Instance.WasButtonPressedThisFrame(GameInput.GameButton.Powerup))
+        if(horizontalDashesLeft > 0 && GameInput.Instance.WasButtonPressedThisFrame(GameInput.GameButton.Powerup))
         {
-            Dash();
+            HorizontalDash();
         }
     }
     private void Winter_Ability()
     {
-
+        if (verticalDashesLeft > 0 && GameInput.Instance.WasButtonPressedThisFrame(GameInput.GameButton.Powerup))
+        {
+            VerticalDash();
+        }
     }
 
-    private void Dash()
+    private void HorizontalDash()
     {
-        if(dashesLeft > 0)
+        if(horizontalDashesLeft > 0)
         {
-            rb2D.AddForce(new Vector2(dashForce * transform.localScale.x, 0), ForceMode2D.Impulse);
-            dashesLeft--;
+            rb2D.AddForce(new Vector2(horizontalDashForce * transform.localScale.x, 0), ForceMode2D.Impulse);
+            horizontalDashesLeft--;
+        }
+    }
+    private void VerticalDash()
+    {
+        if (verticalDashesLeft > 0 && verticalInput != 0)
+        {
+            rb2D.AddForce(new Vector2(0, verticalDashForce * verticalInput), ForceMode2D.Impulse);
+            verticalDashesLeft--;
         }
     }
 
@@ -122,7 +139,8 @@ public class Player : MonoBehaviour
     {
         if (collision.transform.position.y < transform.position.y) 
         {
-            dashesLeft = maxDashes;
+            horizontalDashesLeft = maxHorizontalDashes;
+            verticalDashesLeft = maxVerticalDashes;
 
             if (collision.gameObject.TryGetComponent(out Platform platform))
             {
@@ -145,6 +163,10 @@ public class Player : MonoBehaviour
         if (GameInput.Instance.IsButtonPressed(GameInput.GameButton.Right)) horizontalInput = 1f;
         else if (GameInput.Instance.IsButtonPressed(GameInput.GameButton.Left)) horizontalInput = -1f;
         else horizontalInput = 0f;
+
+        if (GameInput.Instance.IsButtonPressed(GameInput.GameButton.Up)) verticalInput = 1f;
+        else if (GameInput.Instance.IsButtonPressed(GameInput.GameButton.Down)) verticalInput = -1f;
+        else verticalInput = 0f;
 
         wasJumpButtonPressed = GameInput.Instance.WasButtonPressedThisFrame(GameInput.GameButton.Jump);
     }

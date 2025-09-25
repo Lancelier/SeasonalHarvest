@@ -197,14 +197,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77e15f2394266404fa908cc088f17e0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  season: 0
+  season: 2
   moveSpeed: 10
   horizontalMoveSpeedLerpFactor: 10
   maxFallSpeed: 10
   springGlideMaxFallSpeed: 0
   jumpForce: 11
-  dashForce: 40
-  maxDashes: 1
+  horizontalDashForce: 40
+  verticalDashForce: 15
+  maxHorizontalDashes: 1
+  maxVerticalDashes: 1
 --- !u!61 &383662309
 BoxCollider2D:
   m_ObjectHideFlags: 0
