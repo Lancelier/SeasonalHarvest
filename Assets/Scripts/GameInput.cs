@@ -25,6 +25,8 @@ public class GameInput : MonoBehaviour
 
         inputActions = new PlayerInputActions();
         inputActions.Player.Enable();
+
+        DontDestroyOnLoad(gameObject);
     }
     
     public bool IsButtonPressed(GameButton button)

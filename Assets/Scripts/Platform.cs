@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -13,6 +12,7 @@ public class Platform : MonoBehaviour
         Spring,
         Summer,
         Winter,
+        Normal,
     }
 
     [SerializeField] private Season season;
@@ -25,6 +25,7 @@ public class Platform : MonoBehaviour
     [SerializeField] private Color springColor;
     [SerializeField] private Color summerColor;
     [SerializeField] private Color winterColor;
+    [SerializeField] private Color normalColor;
 
     private float timer = 0;
     private bool stoodOnWinterBlock = false;
@@ -72,6 +73,11 @@ public class Platform : MonoBehaviour
             }
         }
 
+        if (season == Season.Normal)
+        {
+            sprite.material.color = normalColor;
+        }
+
         if (isBlockDestroyed)
         {
             timer += Time.deltaTime;
@@ -95,7 +101,7 @@ public class Platform : MonoBehaviour
 
         if (season == Season.Summer)
         {
-            GameManager.Instance.PlayerDeath();
+            StartCoroutine(GameManager.Instance.PlayerDeath());
         }
 
         if (season == Season.Winter)

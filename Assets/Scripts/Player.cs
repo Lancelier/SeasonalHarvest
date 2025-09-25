@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private Season season;
 
+    [Space]
+    [Header("Stats")]
     [SerializeField] private float moveSpeed;
     [SerializeField] private float horizontalMoveSpeedLerpFactor;
     [SerializeField] private float maxFallSpeed;
@@ -17,6 +19,11 @@ public class Player : MonoBehaviour
     [SerializeField] private int maxHorizontalDashes;
     [SerializeField] private int maxVerticalDashes;
 
+    [Space]
+    [Header("Colors")]
+    [SerializeField] private Color springColor;
+    [SerializeField] private Color summerColor;
+    [SerializeField] private Color winterColor;
 
     public enum Season
     {
@@ -31,13 +38,16 @@ public class Player : MonoBehaviour
     private bool wasJumpButtonPressed = false;
     private int horizontalDashesLeft = 0;
     private int verticalDashesLeft = 0;
-    private bool canJump = false;
+    private bool canJump = true;
     private float fallSpeed;
     private bool isGliding = false;
+
+    private SpriteRenderer sprite;
 
     private void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
+        sprite = GetComponentInChildren<SpriteRenderer>();
     }
 
     private void Start()
@@ -45,10 +55,26 @@ public class Player : MonoBehaviour
         horizontalDashesLeft = maxHorizontalDashes;
         verticalDashesLeft = maxVerticalDashes;
         fallSpeed = maxFallSpeed;
+        canJump = true;
     }
 
     private void Update()
     {
+        switch (season)
+        {
+            case Season.Spring:
+                sprite.color = springColor;
+                break;
+            case Season.Summer:
+                sprite.color = summerColor;
+                break;
+            case Season.Winter:
+                sprite.color = winterColor;
+                break;
+            default:
+                break;
+        }
+
         GetInput();
         HandleHorizontalMovement();
         HandleJump();
@@ -70,6 +96,8 @@ public class Player : MonoBehaviour
                 isGliding = false;
                 break;
         }
+
+        Debug.Log(canJump);
     }
 
     private void HandleHorizontalMovement()
@@ -148,6 +176,11 @@ public class Player : MonoBehaviour
             }
             else canJump = true;
         }
+
+        if (collision.gameObject.CompareTag("Spike"))
+        {
+            StartCoroutine(GameManager.Instance.PlayerDeath());
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -155,6 +188,14 @@ public class Player : MonoBehaviour
         if (collision.transform.position.y < transform.position.y)
         {
             canJump = false;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Finish"))
+        {
+            StartCoroutine(GameManager.Instance.PlayerWin());
         }
     }
 
@@ -169,5 +210,10 @@ public class Player : MonoBehaviour
         else verticalInput = 0f;
 
         wasJumpButtonPressed = GameInput.Instance.WasButtonPressedThisFrame(GameInput.GameButton.Jump);
+    }
+
+    public void SetSeason(Season season)
+    {
+        this.season = season;
     }
 }
