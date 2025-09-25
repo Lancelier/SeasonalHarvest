@@ -6,7 +6,7 @@ using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Platform_behaviour : MonoBehaviour
+public class Platform : MonoBehaviour
 {
     public enum Season
     {
@@ -102,7 +102,11 @@ public class Platform_behaviour : MonoBehaviour
         {
             stoodOnWinterBlock = true;
         }
+    }
 
+    public Season GetPlatformSeason()
+    {
+        return season;
     }
 
 }
