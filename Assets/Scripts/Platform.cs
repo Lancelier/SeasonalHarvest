@@ -18,7 +18,7 @@ public class Platform : MonoBehaviour
     [SerializeField] private Season season;
     [SerializeField] private float springPlatformJumpForce;
     [SerializeField] private float winterPlatformDelayToBreak;
-    [SerializeField] private float winterPlatformRespawnDelay;
+    [SerializeField] private float respawnDelay;
 
     [Space]
     [Header("Colors")]
@@ -28,7 +28,7 @@ public class Platform : MonoBehaviour
 
     private float timer = 0;
     private bool stoodOnWinterBlock = false;
-    private bool isWinterBlockDestroyed = false;
+    private bool isBlockDestroyed = false;
 
     private BoxCollider2D boxCollider2D;
     private SpriteRenderer sprite;
@@ -67,21 +67,21 @@ public class Platform : MonoBehaviour
 
                     timer = 0;
                     stoodOnWinterBlock = false;
-                    isWinterBlockDestroyed = true;
+                    isBlockDestroyed = true;
                 }
             }
-            else if (isWinterBlockDestroyed)
-            {
-                timer += Time.deltaTime;
-                if(timer >= winterPlatformRespawnDelay)
-                {
-                    boxCollider2D.enabled = true;
-                    sprite.enabled = true;
+        }
 
-                    timer = 0;
-                    stoodOnWinterBlock = false;
-                    isWinterBlockDestroyed = false;
-                }
+        if (isBlockDestroyed)
+        {
+            timer += Time.deltaTime;
+            if (timer >= respawnDelay)
+            {
+                boxCollider2D.enabled = true;
+                sprite.enabled = true;
+
+                timer = 0;
+                isBlockDestroyed = false;
             }
         }
     }
@@ -95,7 +95,7 @@ public class Platform : MonoBehaviour
 
         if (season == Season.Summer)
         {
-            //collision.gameObject.SetActive(false);
+            GameManager.Instance.PlayerDeath();
         }
 
         if (season == Season.Winter)
