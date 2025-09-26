@@ -15,7 +15,7 @@ The game runs smoothly on any windows device that can run a web browser.
 
 ## Installation Steps
 
-No need of installation. The game can be played on the web here.
+No need of installation. The game can be played on the web [here](https://lancelier.itch.io/seasonal-harvest).
 
 ## Known Issues
 
